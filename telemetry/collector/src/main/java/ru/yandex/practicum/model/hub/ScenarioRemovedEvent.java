@@ -12,7 +12,7 @@ import lombok.ToString;
 public class ScenarioRemovedEvent extends HubEvent {
     @NotBlank
     @Size(min = 3)
-    private String name; // Название удаляемого сценария
+    private String name;
 
     @Override
     public HubEventType getType() {

@@ -5,17 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.model.sensors.ClimateSensorEvent;
-import ru.yandex.practicum.model.sensors.LightSensorEvent;
-import ru.yandex.practicum.model.sensors.MotionSensorEvent;
-import ru.yandex.practicum.model.sensors.SensorEvent;
-import ru.yandex.practicum.model.sensors.SwitchSensorEvent;
-import ru.yandex.practicum.model.sensors.TemperatureSensorEvent;
-import ru.yandex.practicum.service.converter.sensors.ClimateSensorEventConverter;
-import ru.yandex.practicum.service.converter.sensors.LightSensorEventConverter;
-import ru.yandex.practicum.service.converter.sensors.MotionSensorEventConverter;
-import ru.yandex.practicum.service.converter.sensors.SwitchSensorEventConverter;
-import ru.yandex.practicum.service.converter.sensors.TemperatureSensorEventConverter;
+import ru.yandex.practicum.model.sensors.*;
+import ru.yandex.practicum.service.converter.sensors.*;
 
 @Slf4j
 @Service

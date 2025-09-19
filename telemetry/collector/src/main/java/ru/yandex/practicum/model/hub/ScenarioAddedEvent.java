@@ -15,7 +15,7 @@ import java.util.List;
 public class ScenarioAddedEvent extends HubEvent {
     @NotBlank
     @Size(min = 3)
-    private String name; // Название сценария
+    private String name;
     @NotNull
     private List<ScenarioCondition> conditions;
     @NotNull

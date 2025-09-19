@@ -10,7 +10,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class DeviceRemovedEvent extends HubEvent {
     @NotBlank
-    private String id; // Идентификатор удалённого устройства
+    private String id;
 
     @Override
     public HubEventType getType() {
