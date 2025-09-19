@@ -29,6 +29,5 @@ public abstract class HubEvent {
     private String hubId;
     private Instant timestamp = Instant.now();
 
-    // Абстрактный метод, который возвращает тип события хаба
     public abstract HubEventType getType();
 }
