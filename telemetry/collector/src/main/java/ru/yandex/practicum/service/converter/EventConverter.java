@@ -5,6 +5,8 @@ import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import ru.yandex.practicum.kafka.CollectorClientProducer;
 
+import java.time.Instant;
+
 @Slf4j
 public abstract class EventConverter<T, A extends SpecificRecordBase> {
 
@@ -15,7 +17,7 @@ public abstract class EventConverter<T, A extends SpecificRecordBase> {
         A avroEvent = convert(event);
 
         log.info("Отправляю Avro-событие в Kafka: {}", avroEvent);
-        ProducerRecord<String, SpecificRecordBase> record = new ProducerRecord<>(topic, key, avroEvent);
+        ProducerRecord<String, SpecificRecordBase> record = new ProducerRecord<>(topic,1, Instant.now().getEpochSecond(), key, avroEvent);
 
         kafkaProducer.getProducer().send(record);
     }

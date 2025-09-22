@@ -7,10 +7,12 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
 import java.util.Properties;
 
 @Configuration
+@PropertySource("classpath:application.properties")
 public class CollectorProducerConfig {
 
     @Value("${kafkaBootstrapServer}")
@@ -23,7 +25,7 @@ public class CollectorProducerConfig {
     private String valueSerializerClass;
 
     @Bean
-    CollectorClientProducer getProducer() {
+    public CollectorClientProducer getProducer() {
         return new CollectorClientProducer() {
             private Producer<String, SpecificRecordBase> producer;
 
