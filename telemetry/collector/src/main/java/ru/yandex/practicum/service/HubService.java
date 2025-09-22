@@ -3,8 +3,8 @@ package ru.yandex.practicum.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.kafka.CollectorClientProducer;
 import ru.yandex.practicum.model.hub.*;
 import ru.yandex.practicum.service.converter.hub.DeviceAddedEventConverter;
 import ru.yandex.practicum.service.converter.hub.DeviceRemovedEventConverter;
@@ -16,7 +16,7 @@ import ru.yandex.practicum.service.converter.hub.ScenarioRemovedEventConverter;
 @RequiredArgsConstructor
 public class HubService {
 
-    private final KafkaTemplate<String, Object> hubKafkaTemplate;
+    private final CollectorClientProducer hubKafkaProducer;
 
     @Value("${hubEventTopic}")
     private String hubEventTopic;
@@ -25,19 +25,19 @@ public class HubService {
         switch (event.getType()) {
             case DEVICE_ADDED:
                 new DeviceAddedEventConverter()
-                        .sendEvent(hubKafkaTemplate, hubEventTopic, event.getHubId(), (DeviceAddedEvent) event);
+                        .sendEvent(hubKafkaProducer, hubEventTopic, event.getHubId(), (DeviceAddedEvent) event);
                 break;
             case DEVICE_REMOVED:
                 new DeviceRemovedEventConverter()
-                        .sendEvent(hubKafkaTemplate, hubEventTopic, event.getHubId(), (DeviceRemovedEvent) event);
+                        .sendEvent(hubKafkaProducer, hubEventTopic, event.getHubId(), (DeviceRemovedEvent) event);
                 break;
             case SCENARIO_ADDED:
                 new ScenarioAddedEventConverter()
-                        .sendEvent(hubKafkaTemplate, hubEventTopic, event.getHubId(), (ScenarioAddedEvent) event);
+                        .sendEvent(hubKafkaProducer, hubEventTopic, event.getHubId(), (ScenarioAddedEvent) event);
                 break;
             case SCENARIO_REMOVED:
                 new ScenarioRemovedEventConverter()
-                        .sendEvent(hubKafkaTemplate, hubEventTopic, event.getHubId(), (ScenarioRemovedEvent) event);
+                        .sendEvent(hubKafkaProducer, hubEventTopic, event.getHubId(), (ScenarioRemovedEvent) event);
                 break;
             default:
                 log.error("Неизвестный тип события для hub: {}", event.getType());
