@@ -18,31 +18,44 @@ public class SensorService {
     @Value("${sensorEventTopic}")
     private String sensorEventTopic;
 
+    private final ClimateSensorEventConverter climateSensorEventConverter;
+    private final LightSensorEventConverter lightSensorEventConverter;
+    private final MotionSensorEventConverter motionSensorEventConverter;
+    private final SwitchSensorEventConverter switchSensorEventConverter;
+    private final TemperatureSensorEventConverter temperatureSensorEventConverter;
+
     public void processSensorEvent(SensorEvent event) {
         switch (event.getType()) {
             case CLIMATE_SENSOR_EVENT:
-                new ClimateSensorEventConverter()
-                        .sendEvent(sensorKafkaProducer, sensorEventTopic, event.getHubId(), (ClimateSensorEvent) event);
+                validateEventType(event, ClimateSensorEvent.class);
+                climateSensorEventConverter.sendEvent(sensorKafkaProducer, sensorEventTopic, event.getHubId(), (ClimateSensorEvent) event);
                 break;
             case LIGHT_SENSOR_EVENT:
-                new LightSensorEventConverter()
-                        .sendEvent(sensorKafkaProducer, sensorEventTopic, event.getHubId(), (LightSensorEvent) event);
+                validateEventType(event, LightSensorEvent.class);
+                lightSensorEventConverter.sendEvent(sensorKafkaProducer, sensorEventTopic, event.getHubId(), (LightSensorEvent) event);
                 break;
             case MOTION_SENSOR_EVENT:
-                new MotionSensorEventConverter()
-                        .sendEvent(sensorKafkaProducer, sensorEventTopic, event.getHubId(), (MotionSensorEvent) event);
+                validateEventType(event, MotionSensorEvent.class);
+                motionSensorEventConverter.sendEvent(sensorKafkaProducer, sensorEventTopic, event.getHubId(), (MotionSensorEvent) event);
                 break;
             case SWITCH_SENSOR_EVENT:
-                new SwitchSensorEventConverter()
-                        .sendEvent(sensorKafkaProducer, sensorEventTopic, event.getHubId(), (SwitchSensorEvent) event);
+                validateEventType(event, SwitchSensorEvent.class);
+                switchSensorEventConverter.sendEvent(sensorKafkaProducer, sensorEventTopic, event.getHubId(), (SwitchSensorEvent) event);
                 break;
             case TEMPERATURE_SENSOR_EVENT:
-                new TemperatureSensorEventConverter()
-                        .sendEvent(sensorKafkaProducer, sensorEventTopic, event.getHubId(), (TemperatureSensorEvent) event);
+                validateEventType(event, TemperatureSensorEvent.class);
+                temperatureSensorEventConverter.sendEvent(sensorKafkaProducer, sensorEventTopic, event.getHubId(), (TemperatureSensorEvent) event);
                 break;
             default:
                 log.error("Неизвестный тип события для sensor: {}", event.getType());
                 throw new IllegalArgumentException("Неизвестный тип события sensor: " + event.getType());
+        }
+    }
+
+    private void validateEventType(SensorEvent event, Class<?> expectedClass) {
+        if (!expectedClass.isInstance(event)) {
+            throw new IllegalArgumentException(
+                    "Ожидался тип " + expectedClass.getSimpleName() + ", но получен " + event.getClass().getSimpleName());
         }
     }
 }

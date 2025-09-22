@@ -21,27 +21,39 @@ public class HubService {
     @Value("${hubEventTopic}")
     private String hubEventTopic;
 
+    private final DeviceAddedEventConverter deviceAddedEventConverter;
+    private final DeviceRemovedEventConverter deviceRemovedEventConverter;
+    private final ScenarioAddedEventConverter scenarioAddedEventConverter;
+    private final ScenarioRemovedEventConverter scenarioRemovedEventConverter;
+
     public void processHubEvent(HubEvent event) {
         switch (event.getType()) {
             case DEVICE_ADDED:
-                new DeviceAddedEventConverter()
-                        .sendEvent(hubKafkaProducer, hubEventTopic, event.getHubId(), (DeviceAddedEvent) event);
+                validateEventType(event, DeviceAddedEvent.class);
+                deviceAddedEventConverter.sendEvent(hubKafkaProducer, hubEventTopic, event.getHubId(), (DeviceAddedEvent) event);
                 break;
             case DEVICE_REMOVED:
-                new DeviceRemovedEventConverter()
-                        .sendEvent(hubKafkaProducer, hubEventTopic, event.getHubId(), (DeviceRemovedEvent) event);
+                validateEventType(event, DeviceRemovedEvent.class);
+                deviceRemovedEventConverter.sendEvent(hubKafkaProducer, hubEventTopic, event.getHubId(), (DeviceRemovedEvent) event);
                 break;
             case SCENARIO_ADDED:
-                new ScenarioAddedEventConverter()
-                        .sendEvent(hubKafkaProducer, hubEventTopic, event.getHubId(), (ScenarioAddedEvent) event);
+                validateEventType(event, ScenarioAddedEvent.class);
+                scenarioAddedEventConverter.sendEvent(hubKafkaProducer, hubEventTopic, event.getHubId(), (ScenarioAddedEvent) event);
                 break;
             case SCENARIO_REMOVED:
-                new ScenarioRemovedEventConverter()
-                        .sendEvent(hubKafkaProducer, hubEventTopic, event.getHubId(), (ScenarioRemovedEvent) event);
+                validateEventType(event, ScenarioRemovedEvent.class);
+                scenarioRemovedEventConverter.sendEvent(hubKafkaProducer, hubEventTopic, event.getHubId(), (ScenarioRemovedEvent) event);
                 break;
             default:
                 log.error("Неизвестный тип события для hub: {}", event.getType());
                 throw new IllegalArgumentException("Неизвестный тип события hub: " + event.getType());
+        }
+    }
+
+    private void validateEventType(HubEvent event, Class<?> expectedClass) {
+        if (!expectedClass.isInstance(event)) {
+            throw new IllegalArgumentException(
+                    "Ожидался тип " + expectedClass.getSimpleName() + ", но получен " + event.getClass().getSimpleName());
         }
     }
 }

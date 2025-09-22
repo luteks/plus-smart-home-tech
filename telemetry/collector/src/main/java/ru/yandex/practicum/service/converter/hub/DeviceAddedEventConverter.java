@@ -1,11 +1,13 @@
 package ru.yandex.practicum.service.converter.hub;
 
+import org.springframework.stereotype.Service;
 import ru.yandex.practicum.kafka.telemetry.event.DeviceAddedEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.DeviceTypeAvro;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
 import ru.yandex.practicum.model.hub.DeviceAddedEvent;
 import ru.yandex.practicum.service.converter.EventConverter;
 
+@Service
 public class DeviceAddedEventConverter extends EventConverter<DeviceAddedEvent, HubEventAvro> {
     @Override
     public HubEventAvro convert(DeviceAddedEvent event) {

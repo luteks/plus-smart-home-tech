@@ -1,10 +1,12 @@
 package ru.yandex.practicum.service.converter.hub;
 
+import org.springframework.stereotype.Service;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.ScenarioRemovedEventAvro;
 import ru.yandex.practicum.model.hub.ScenarioRemovedEvent;
 import ru.yandex.practicum.service.converter.EventConverter;
 
+@Service
 public class ScenarioRemovedEventConverter extends EventConverter<ScenarioRemovedEvent, HubEventAvro> {
     @Override
     public HubEventAvro convert(ScenarioRemovedEvent event) {

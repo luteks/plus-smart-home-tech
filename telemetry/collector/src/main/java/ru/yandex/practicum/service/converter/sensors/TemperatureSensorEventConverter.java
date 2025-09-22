@@ -1,10 +1,12 @@
 package ru.yandex.practicum.service.converter.sensors;
 
+import org.springframework.stereotype.Service;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.TemperatureSensorAvro;
 import ru.yandex.practicum.model.sensors.TemperatureSensorEvent;
 import ru.yandex.practicum.service.converter.EventConverter;
 
+@Service
 public class TemperatureSensorEventConverter extends EventConverter<TemperatureSensorEvent, SensorEventAvro> {
 
     @Override

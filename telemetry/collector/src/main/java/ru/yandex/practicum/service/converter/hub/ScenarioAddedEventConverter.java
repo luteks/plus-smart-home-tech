@@ -1,5 +1,6 @@
 package ru.yandex.practicum.service.converter.hub;
 
+import org.springframework.stereotype.Service;
 import ru.yandex.practicum.kafka.telemetry.event.*;
 import ru.yandex.practicum.model.hub.DeviceAction;
 import ru.yandex.practicum.model.hub.ScenarioAddedEvent;
@@ -8,6 +9,7 @@ import ru.yandex.practicum.service.converter.EventConverter;
 
 import java.util.List;
 
+@Service
 public class ScenarioAddedEventConverter extends EventConverter<ScenarioAddedEvent, HubEventAvro> {
 
     @Override
