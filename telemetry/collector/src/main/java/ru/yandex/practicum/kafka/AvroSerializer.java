@@ -1,4 +1,4 @@
-package ru.yandex.practicum.service;
+package ru.yandex.practicum.kafka;
 
 import org.apache.avro.io.BinaryEncoder;
 import org.apache.avro.io.DatumWriter;
