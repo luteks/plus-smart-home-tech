@@ -21,8 +21,7 @@ public abstract class EventConverter<T, A extends SpecificRecordBase> {
             if (exception != null) {
                 log.error("Ошибка при отправке события в Kafka", exception);
             } else {
-                log.debug("Событие успешно отправлено в топик {} партиция {} offset {}",
-                        metadata.topic(), metadata.partition(), metadata.offset());
+                log.debug("Событие успешно отправлено в топик");
             }
         });
     }
