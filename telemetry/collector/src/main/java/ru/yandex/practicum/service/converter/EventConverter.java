@@ -17,12 +17,6 @@ public abstract class EventConverter<T, A extends SpecificRecordBase> {
         log.info("Отправляю Avro-событие в Kafka: {}", avroEvent);
         ProducerRecord<String, SpecificRecordBase> record = new ProducerRecord<>(topic, key, avroEvent);
 
-        kafkaProducer.getProducer().send(record, (metadata, exception) -> {
-            if (exception != null) {
-                log.error("Ошибка при отправке события в Kafka", exception);
-            } else {
-                log.debug("Событие успешно отправлено в топик");
-            }
-        });
+        kafkaProducer.getProducer().send(record);
     }
 }
