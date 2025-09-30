@@ -8,7 +8,7 @@ collector:
       properties:
         bootstrap.servers: localhost:9092
         key.serializer: org.apache.kafka.common.serialization.StringSerializer
-        value.serializer: ru.yandex.practicum.kafka.serializer.GeneralAvroSerializer
+        value.serializer: ru.yandex.practicum.kafka.serializer.AvroSerializer
     consumer:
       properties:
         bootstrap.servers: localhost:9092
