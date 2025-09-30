@@ -4,7 +4,7 @@ collector:
       properties:
         bootstrap.servers: localhost:9092
         key.serializer: org.apache.kafka.common.serialization.StringSerializer
-        value.serializer: ru.yandex.practicum.kafka.serializer.GeneralAvroSerializer
+        value.serializer: ru.yandex.practicum.kafka.serializer.AvroSerializer
       topics:
         sensors-events: telemetry.sensors.v1
         hubs-events: telemetry.hubs.v1
