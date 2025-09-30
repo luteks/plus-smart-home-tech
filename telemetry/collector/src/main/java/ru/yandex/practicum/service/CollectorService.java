@@ -20,9 +20,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class CollectorService {
-    @Value("${sensorEventTopic}")
+    @Value("${collector.kafka.producer.topics.sensors-events}")
     private String sensorsEventsTopic;
-    @Value("${hubEventTopic}")
+    @Value("${collector.kafka.producer.topics.hubs-events}")
     private String hubsEventsTopic;
 
     private final CollectorClientProducer collectorClientProducer;
