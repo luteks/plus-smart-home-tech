@@ -12,7 +12,7 @@ import org.springframework.context.annotation.PropertySource;
 import java.util.Properties;
 
 @Configuration
-@PropertySource("classpath:application.properties")
+@PropertySource("classpath:application.yaml")
 public class CollectorProducerConfig {
 
     @Value("${kafkaBootstrapServer}")
