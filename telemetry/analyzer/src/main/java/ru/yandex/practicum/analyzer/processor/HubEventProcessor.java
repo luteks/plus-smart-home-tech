@@ -75,7 +75,7 @@ public class HubEventProcessor implements Runnable {
                 }
             }
         } catch (WakeupException ignored) {
-
+            log.info("Потребление сообщений из Kafka было прервано (штатное завершение работы)");
         } catch (Exception e) {
             log.error("Произошла ошибка обработки данных от Хаба}", e);
         } finally {
