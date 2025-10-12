@@ -1,4 +1,8 @@
 package ru.yandex.practicum.analyzer.model.enums;
 
-public class ActionType {
+public enum ActionType {
+    ACTIVATE,
+    DEACTIVATE,
+    INVERSE,
+    SET_VALUE
 }
