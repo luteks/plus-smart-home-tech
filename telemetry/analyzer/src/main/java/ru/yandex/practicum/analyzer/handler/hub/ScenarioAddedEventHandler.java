@@ -6,8 +6,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.analyzer.mapper.HubEventMapper;
 import ru.yandex.practicum.analyzer.model.Scenario;
-import ru.yandex.practicum.analyzer.repository.ActionRepository;
-import ru.yandex.practicum.analyzer.repository.ConditionRepository;
 import ru.yandex.practicum.analyzer.repository.ScenarioRepository;
 import ru.yandex.practicum.analyzer.repository.SensorRepository;
 import ru.yandex.practicum.kafka.telemetry.event.DeviceActionAvro;

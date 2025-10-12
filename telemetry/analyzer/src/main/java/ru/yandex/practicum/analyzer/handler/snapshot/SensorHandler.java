@@ -5,5 +5,6 @@ import ru.yandex.practicum.kafka.telemetry.event.SensorStateAvro;
 
 public interface SensorHandler {
     Integer handleToValue(SensorStateAvro stateAvro, ConditionType type);
+
     String getType();
 }

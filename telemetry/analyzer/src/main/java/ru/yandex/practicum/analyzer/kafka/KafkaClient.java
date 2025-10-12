@@ -6,5 +6,6 @@ import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
 
 public interface KafkaClient extends AutoCloseable {
     Consumer<String, HubEventAvro> getKafkaHubConsumer();
+
     Consumer<String, SensorsSnapshotAvro> getKafkaSnapshotConsumer();
 }
