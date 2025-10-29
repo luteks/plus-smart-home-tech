@@ -1,6 +1,5 @@
-package ru.yandex.practicum.exception;
+package ru.yandex.practicum.handler;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -8,16 +7,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.yandex.practicum.error.ErrorResponse;
+import ru.yandex.practicum.exception.EmptyShoppingCartException;
+import ru.yandex.practicum.exception.ProductRemainsInWarehouseException;
+import ru.yandex.practicum.exception.UnauthorizedUserException;
 
 import java.util.Arrays;
 
-@Slf4j
 @RestControllerAdvice
-public class ShoppingStoreErrorHandler {
+public class ShoppingCartErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleCommonException(RuntimeException e) {
-        log.error("500 {}", e.getMessage());
         return ErrorResponse.builder()
                 .cause(e.getCause())
                 .stackTrace(Arrays.asList(e.getStackTrace()))
@@ -29,31 +29,43 @@ public class ShoppingStoreErrorHandler {
                 .build();
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleProductNotFoundException(ProductNotFoundException e) {
-        log.error("404 {}", e.getMessage());
-        return ErrorResponse.builder()
-                .cause(e.getCause())
-                .stackTrace(Arrays.asList(e.getStackTrace()))
-                .httpStatus(HttpStatus.NOT_FOUND.name())
-                .userMessage(e.getMessage())
-                .message("Not Found")
-                .suppressed(Arrays.asList(e.getSuppressed()))
-                .localizedMessage(e.getLocalizedMessage())
-                .build();
-    }
-
     @ExceptionHandler({MissingServletRequestParameterException.class, MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationException(RuntimeException e) {
-        log.error("400 {}", e.getMessage());
+    public ErrorResponse handleBadRequestException(RuntimeException e) {
         return ErrorResponse.builder()
                 .cause(e.getCause())
                 .stackTrace(Arrays.asList(e.getStackTrace()))
                 .httpStatus(HttpStatus.BAD_REQUEST.name())
                 .userMessage(e.getMessage())
                 .message("Bad request")
+                .suppressed(Arrays.asList(e.getSuppressed()))
+                .localizedMessage(e.getLocalizedMessage())
+                .build();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleUnauthorizedException(UnauthorizedUserException e) {
+        return ErrorResponse.builder()
+                .cause(e.getCause())
+                .stackTrace(Arrays.asList(e.getStackTrace()))
+                .httpStatus(HttpStatus.UNAUTHORIZED.name())
+                .userMessage(e.getMessage())
+                .message("Not Authorized")
+                .suppressed(Arrays.asList(e.getSuppressed()))
+                .localizedMessage(e.getLocalizedMessage())
+                .build();
+    }
+
+    @ExceptionHandler({EmptyShoppingCartException.class, ProductRemainsInWarehouseException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNotFoundException(RuntimeException e) {
+        return ErrorResponse.builder()
+                .cause(e.getCause())
+                .stackTrace(Arrays.asList(e.getStackTrace()))
+                .httpStatus(HttpStatus.NOT_FOUND.name())
+                .userMessage(e.getMessage())
+                .message("Not Found")
                 .suppressed(Arrays.asList(e.getSuppressed()))
                 .localizedMessage(e.getLocalizedMessage())
                 .build();

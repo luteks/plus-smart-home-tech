@@ -1,7 +1,10 @@
 package ru.yandex.practicum.request;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import ru.yandex.practicum.enums.QuantityState;
 
 import java.util.UUID;
