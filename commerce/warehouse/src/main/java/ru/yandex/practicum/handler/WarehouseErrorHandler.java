@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.yandex.practicum.error.ErrorResponse;
-import ru.yandex.practicum.exception.NoSpecifiedProductInWarehouseException;
 import ru.yandex.practicum.exception.ProductLowQuantityInWarehouseException;
 import ru.yandex.practicum.exception.ProductNotFoundInWarehouseException;
 import ru.yandex.practicum.exception.ProductNotUniqueInWarehouseException;
@@ -35,7 +34,6 @@ public class WarehouseErrorHandler {
 
     @ExceptionHandler({MissingServletRequestParameterException.class,
             MethodArgumentNotValidException.class,
-            NoSpecifiedProductInWarehouseException.class,
             ProductLowQuantityInWarehouseException.class,
             ProductNotUniqueInWarehouseException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
