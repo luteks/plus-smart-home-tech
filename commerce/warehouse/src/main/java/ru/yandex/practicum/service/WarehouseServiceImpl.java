@@ -13,17 +13,19 @@ import ru.yandex.practicum.exception.ProductLowQuantityInWarehouseException;
 import ru.yandex.practicum.exception.ProductNotFoundInWarehouseException;
 import ru.yandex.practicum.exception.ProductNotUniqueInWarehouseException;
 import ru.yandex.practicum.feign.ShoppingStoreClient;
+import ru.yandex.practicum.mapper.BookingMapper;
 import ru.yandex.practicum.mapper.WarehouseMapper;
 import ru.yandex.practicum.model.Address;
+import ru.yandex.practicum.model.Booking;
 import ru.yandex.practicum.model.Warehouse;
+import ru.yandex.practicum.repository.BookingRepository;
 import ru.yandex.practicum.repository.WarehouseRepository;
 import ru.yandex.practicum.request.AddProductToWarehouseRequest;
+import ru.yandex.practicum.request.AssemblyProductsForOrderRequest;
 import ru.yandex.practicum.request.RegistrationProductInWarehouseRequest;
+import ru.yandex.practicum.request.ShippedToDeliveryRequest;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -32,9 +34,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(isolation = Isolation.READ_COMMITTED)
 public class WarehouseServiceImpl implements WarehouseService {
-    private final WarehouseRepository warehouseRepository;
-    private final WarehouseMapper warehouseMapper;
     private final ShoppingStoreClient shoppingStoreClient;
+    private final WarehouseRepository warehouseRepository;
+    private final BookingRepository bookingRepository;
+    private final WarehouseMapper warehouseMapper;
+    private final BookingMapper bookingMapper;
 
     @Override
     public void registrateNewProductInWarehouse(RegistrationProductInWarehouseRequest registrationProductInWarehouseRequest) {
@@ -47,6 +51,27 @@ public class WarehouseServiceImpl implements WarehouseService {
         warehouseRepository.save(warehouse);
         warehouseRepository.flush();
         log.info("Товар успешно добавлен в cписок товаров склада.");
+    }
+
+    @Override
+    public void loadedToDelivery(ShippedToDeliveryRequest deliveryRequest) {
+        Booking booking = bookingRepository.findByOrderId(deliveryRequest.getOrderId()).orElseThrow(
+                () -> {
+                    log.error("Товар не найден на складе.");
+                    return new ProductNotFoundInWarehouseException("Товар не найден на складе.");
+                });
+        booking.setDeliveryId(deliveryRequest.getDeliveryId());
+
+        log.debug("Забронированным товарам заказа {} добавлена доставка {}.", booking.getOrderId(), booking.getDeliveryId());
+    }
+
+    @Override
+    public void acceptReturn(Map<UUID, Long> products) {
+        List<Warehouse> warehousesItems = warehouseRepository.findAllById(products.keySet());
+        for (Warehouse warehouse : warehousesItems) {
+            warehouse.setQuantity(warehouse.getQuantity() + products.get(warehouse.getProductId()));
+        }
+        log.debug("Товары успешно возвращены на склад. {}", products);
     }
 
     @Override
@@ -77,6 +102,36 @@ public class WarehouseServiceImpl implements WarehouseService {
         BookedProductsDto bookedProductsDto = getBookedProducts(warehouseProducts.values(), products);
 
         log.info("Возвращено количество товара на складе.");
+        return bookedProductsDto;
+    }
+
+    @Override
+    public BookedProductsDto assemblyProductsForOrder(AssemblyProductsForOrderRequest assemblyProductsForOrder) {
+        Booking booking = bookingRepository.findById(assemblyProductsForOrder.getShoppingCartId()).orElseThrow(
+                () -> {
+                    log.error("Корзина товаров {} не найдена", assemblyProductsForOrder.getShoppingCartId());
+                    return new RuntimeException(String.format("Корзина товаров %s не найдена",
+                            assemblyProductsForOrder.getShoppingCartId()));
+                }
+        );
+
+        Map<UUID, Long> productsInBooking = booking.getProducts();
+        List<Warehouse> productsInWarehouse = warehouseRepository.findAllById(productsInBooking.keySet());
+        productsInWarehouse.forEach(warehouse -> {
+            if (warehouse.getQuantity() < productsInBooking.get(warehouse.getProductId())) {
+                log.error("На складе малое количество товаров.");
+                throw new ProductLowQuantityInWarehouseException("На складе малое количество товаров.");
+            }
+        });
+
+        for (Warehouse warehouse : productsInWarehouse) {
+            warehouse.setQuantity(warehouse.getQuantity() - productsInBooking.get(warehouse.getProductId()));
+        }
+
+        booking.setOrderId(assemblyProductsForOrder.getOrderId());
+        BookedProductsDto bookedProductsDto = bookingMapper.toBookedProductsDto(booking);
+
+        log.debug("Товары успешно зарезервированы. {}", bookedProductsDto);
         return bookedProductsDto;
     }
 
